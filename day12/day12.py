@@ -47,17 +47,22 @@ def part1(start, grid, goal):
 def main():
     content = read()
     grid = [[None for j in range(len(content[0]))] for i in range(len(content))]
+    starts = []
     for i, val in enumerate(content):
         for j, char in enumerate(val):
-            if char == "S":
-                grid[i][j] = ord("a")-1
+            if char == "S" or char == "a":
+                grid[i][j] = ord("a")
                 start = (i, j)
+                starts.append(start)
             elif char == "E":
                 grid[i][j] = ord("z")+1
             else:
                 grid[i][j] = ord(char)
-
-    print(part1(start, grid, ord("z")+1))
-
+    ans = float("inf")
+    for b in starts:
+        temp_ans = part1(b, grid, ord("z")+1)
+        if temp_ans is not None:
+            ans = min(ans, temp_ans)
+    print(ans)
 if __name__ == "__main__":
     main()
