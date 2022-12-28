@@ -19,7 +19,7 @@ def operation(operator, right, constant):
         left = right + constant
     else:
         left = right - constant
-    left = int(left/3)
+    left = int(left)
     return left
 
 def test(right, constant, mondic, current, i, j):
@@ -30,21 +30,27 @@ def test(right, constant, mondic, current, i, j):
         mondic[j][0].append(right)
         return
 
-def part1(mondic, count):
+def part1(mondic, count, part2=False):
+    if part2:
+        modulo = 1
+        for key in mondic:
+            modulo *= mondic[key][2][0]
+
     j = 0
     track = [0]*count
-    while j < 20:
+    while j < 10000:
         for i in range(count):
             track[i] += len(mondic[i][0])
             for item in mondic[i][0]:
                 new_val = operation(mondic[i][1][0], item, mondic[i][1][1])
+                if part2: new_val = new_val % modulo
                 test(new_val, mondic[i][2][0], mondic, i, mondic[i][2][1], mondic[i][2][2])
 
             mondic[i][0] = []
 
         # pry()
         j += 1
-
+    print(track)
     track.sort(reverse=True)
     print(track[0]*track[1])
 
@@ -76,7 +82,8 @@ def main():
         mondic[count].append((test_constant, m1, m2))
         count += 1
     # print(mondic)
-    part1(mondic, count)
+    part1(mondic, count, True)
+
 
 if __name__ == "__main__":
     main()
