@@ -1,31 +1,20 @@
-def read():
-    with open("input.in") as f:
-        content = f.read().splitlines()
-    return content
+rope = [0] * 10
+seen = [set([x]) for x in rope]
+dirs = {'L':+1, 'R':-1, 'D':1j, 'U':-1j}
+sign = lambda x: complex((x.real>0) - (x.real<0), (x.imag>0) - (x.imag<0))
+
+for line in open('input.in'):
+    for _ in range(int(line[2:])):
+        rope[0] += dirs[line[0]]
+
+        for i in range(1, 10):
+            dist = rope[i-1] - rope[i]
+            if abs(dist) >= 2:
+                rope[i] += sign(dist)
+                seen[i].add(rope[i])
+
+print(len(seen[1]), len(seen[9]))
 
 
-def part1(content):
-    curr_head = (0, 0)
-    curr_tail = (0, 0)
-
-    for direction in content:
-        head_move = direction.split(' ')
-        if head_move[0] == "R":
-            for i in range(int(head_move[-1])):
-                if not reachable(curr_head[0], curr_head[1]+1):
-
-
-
-def reachable(hx, hy, tx, ty):
-    if abs(hx-tx)>1 and abs(hy-ty)>1:
-        return (1, 1)
-    elif abs()
-
-
-
-def main():
-    content = read()
-    part1(content)
-
-if __name__ == "__main__":
-    main()
+# credits to 4HbQ on reddit
+# neat code

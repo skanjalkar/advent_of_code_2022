@@ -1,53 +1,63 @@
-import pry
-def read():
-    with open('input.in') as f:
-        content = f.read().splitlines()
-    return content
+#!/usr/bin/env python3
+# 2022 Day 10: Cathode-Ray Tube
 
-def part1(content):
-    sum_x = 0
-    cycle_sum = 1
-    cycle = [20, 60, 100, 140, 180, 220]
-    count = 0
-    seperate_counter = 0
-    for i, instruction in enumerate(content):
-        split = instruction.split(" ")
-        if split[0] == "addx":
-            seperate_counter += 1
-            if seperate_counter == cycle[count]:
-                print(count)
-                sum_x += seperate_counter * cycle_sum
-                count += 1
-                if count == len(cycle):
-                    return sum_x
+def process_input(filename):
+    """Acquire input data"""
+    with open(filename) as file:
+        input = file.read().splitlines()
+
+    # change addx instructions to a noop, followed by the addx
+    program = []
+    for line in input:
+        token = line.split()
+        if token[0] == 'addx':
+            program.append('noop')
+        program.append(line)
+
+    return program
 
 
-            seperate_counter += 1
-            cycle_sum += int(split[-1])
-            if seperate_counter == cycle[count]:
-                print(count)
-                sum_x += seperate_counter * cycle_sum
-                count += 1
+def run_program(program):
+    signal_sum = 0
+    X_reg = 1
+    cycle = 0
+    pixel = 0
+    line = ''
+    for instruction in program:
+        cycle += 1
 
-                if count == len(cycle):
-                    return sum_x
+        if pixel in (X_reg-1, X_reg, X_reg+1):
+            ch = '#'
         else:
-            seperate_counter += 1
-            if seperate_counter == cycle[count]:
-                sum_x += seperate_counter * cycle_sum
-                count += 1
-                if count == len(cycle):
-                    return sum_x
+            ch = '.'
+        line += ch
 
-        # print(cycle_sum, seperate_counter, "DEBUG")
-    return sum_x
+        if cycle in (20,60,100,140,180,220):
+            signal_strength = cycle * X_reg
+            signal_sum += signal_strength
+        token = instruction.split()
+        if token[0] == 'addx':
+            V = int(token[1])
+            X_reg += V
+        pixel += 1
+        if pixel % 40 == 0:
+            print(line)
+            line = ''
+            pixel = 0
 
-def part2(content):
-    pass
+    return signal_sum
 
-def main():
-    content = read()
-    print(part1(content))
+#-----------------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    main()
+filename = 'input.in'
+#filename = 'sample.txt'
+
+program = process_input(filename)
+
+signal_sum = run_program(program)
+
+print('')
+print('Sum of signal strengths =',signal_sum)
+print('')
+
+# credit to msschmitt

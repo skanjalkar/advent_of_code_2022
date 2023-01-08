@@ -1,23 +1,34 @@
-class Node:
-    def __init__(self, name) -> None:
-        self.name = name
-        self.memory = 0
-        self.children = []
+from collections import defaultdict
 
-def read():
-    with open("input.in") as f:
-        content = f.read().splitlines()
-    return content
+with open("input.in") as f:
+    commands = f.readlines()
 
-def pre_order():
-    pass
+sizes = defaultdict(int)
+stack = []
 
-def part1(content):
-    print(content)
+i = 0
+for c in commands:
+    if c.startswith("$ ls") or c.startswith("dir"):
+        continue
+    if c.startswith("$ cd"):
+        dest = c.split()[2]
+        if dest == "..":
+            stack.pop()
+        else:
+            i += 1
+            path = f"{stack[-1]}_{dest}" if stack else dest
+            stack.append(path)
+    else:
+        size, file = c.split()
+        for path in stack:
+            sizes[path] += int(size)
 
-def main():
-    content = read()
-    part1(content)
+needed_size = 30000000 - (70000000 - sizes["/"])
+for size in sorted(sizes.values()):
+    if size > needed_size:
+        break
 
-if __name__ == "__main__":
-    main()
+print(sum(n for n in sizes.values() if n <= 100000)) # task 1
+print(size) # task 2
+
+# credit to  @silentw0lf silentw0lf 07
